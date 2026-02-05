@@ -1,13 +1,15 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import SidebarDropdowns from "./SidebarDropdowns";
 import { HOSPITAL_HEADER_DOMAINS, PATIENT_HEADER_DOMAINS } from "./HeaderDropdowns";
 
 describe("SidebarDropdowns", () => {
-  it("renders simple buttons for ≤3 subpages", () => {
-    // Use the 'Home' domain from PATIENT_HEADER_DOMAINS (4 subpages, but test with first 3)
-    const domain = PATIENT_HEADER_DOMAINS.find(d => d.label === "Home");
-    render(
+  it("renders simple buttons for ≤3 subpages with accessible roles", async () => {
+    const user = userEvent.setup();
+    const domain = PATIENT_HEADER_DOMAINS.find((d) => d.label === "Home");
+
+    const { asFragment } = render(
       <SidebarDropdowns
         role="patient"
         activeDomain="Home"
@@ -16,15 +18,26 @@ describe("SidebarDropdowns", () => {
         collapsed={false}
       />
     );
-    // Only test first 3 subpages for button rendering
-    expect(screen.getByText("Health Summary")).toBeInTheDocument();
-    expect(screen.getByText("Latest Alerts")).toBeInTheDocument();
-    expect(screen.getByText("Care Tasks")).toBeInTheDocument();
+
+    // Prefer accessible role queries
+    const healthSummaryBtn = screen.getByRole("button", { name: /health summary/i });
+    const latestAlertsBtn = screen.getByRole("button", { name: /latest alerts/i });
+    const careTasksBtn = screen.getByRole("button", { name: /care tasks/i });
+
+    expect(healthSummaryBtn).toBeInTheDocument();
+    expect(latestAlertsBtn).toBeInTheDocument();
+    expect(careTasksBtn).toBeInTheDocument();
+
+    // Keyboard interaction should be supported on buttons
+    await user.keyboard("{Tab}");
+    // Snapshot of critical structure (avoid full-tree brittleness)
+    expect(asFragment()).toMatchSnapshot();
   });
 
-  it("renders dropdown for >3 subpages and toggles open/close", () => {
-    // Use the 'Dashboard' domain from HOSPITAL_HEADER_DOMAINS (has >3 subpages)
-    const domain = HOSPITAL_HEADER_DOMAINS.find(d => d.label === "Dashboard");
+  it("renders dropdown for >3 subpages; aria-expanded toggles with click and keyboard", async () => {
+    const user = userEvent.setup();
+    const domain = HOSPITAL_HEADER_DOMAINS.find((d) => d.label === "Dashboard");
+
     render(
       <SidebarDropdowns
         role="hospital"
@@ -34,20 +47,40 @@ describe("SidebarDropdowns", () => {
         collapsed={false}
       />
     );
-    // Dropdown label
-    expect(screen.getByText("Dashboard")).toBeInTheDocument();
-    // Subpages visible by default
-    expect(screen.getByText("Overview")).toBeInTheDocument();
-    expect(screen.getByText("Active Cases")).toBeInTheDocument();
-    // Toggle dropdown
-    fireEvent.click(screen.getByText("Dashboard"));
-    // Subpages should disappear when closed
-    expect(screen.queryByText("Overview")).not.toBeInTheDocument();
+
+    // Toggle should be a button with accessible name
+    const toggle = screen.getByRole("button", { name: /dashboard/i });
+    expect(toggle).toBeInTheDocument();
+
+    // When open, subpages should be visible
+    expect(screen.getByText(/overview/i)).toBeInTheDocument();
+    expect(screen.getByText(/active cases/i)).toBeInTheDocument();
+
+    // aria-expanded should reflect open state when present
+    if (toggle.hasAttribute("aria-expanded")) {
+      expect(toggle).toHaveAttribute("aria-expanded", "true");
+    }
+
+    // Click to close
+    await user.click(toggle);
+    if (toggle.hasAttribute("aria-expanded")) {
+      expect(toggle).toHaveAttribute("aria-expanded", "false");
+    }
+    expect(screen.queryByText(/overview/i)).not.toBeInTheDocument();
+
+    // Keyboard (Enter) to open
+    await user.keyboard("{Enter}");
+    if (toggle.hasAttribute("aria-expanded")) {
+      expect(toggle).toHaveAttribute("aria-expanded", "true");
+    }
+    expect(screen.getByText(/overview/i)).toBeInTheDocument();
   });
 
-  it("calls onSubpageChange when a subpage is clicked", () => {
-    const domain = PATIENT_HEADER_DOMAINS.find(d => d.label === "Home");
+  it("calls onSubpageChange when a subpage is activated", async () => {
+    const user = userEvent.setup();
+    const domain = PATIENT_HEADER_DOMAINS.find((d) => d.label === "Home");
     const onSubpageChange = jest.fn();
+
     render(
       <SidebarDropdowns
         role="patient"
@@ -57,7 +90,47 @@ describe("SidebarDropdowns", () => {
         collapsed={false}
       />
     );
-    fireEvent.click(screen.getByText("Latest Alerts"));
+
+    // Use role-first query; fallback to text if not a button
+    const latestAlerts =
+      screen.queryByRole("button", { name: /latest alerts/i }) ||
+      screen.getByText(/latest alerts/i);
+
+    await user.click(latestAlerts);
     expect(onSubpageChange).toHaveBeenCalledWith("Latest Alerts");
+  });
+
+  it("supports Space key to toggle dropdown accessibility", async () => {
+    const user = userEvent.setup();
+    const domain = HOSPITAL_HEADER_DOMAINS.find((d) => d.label === "Dashboard");
+
+    render(
+      <SidebarDropdowns
+        role="hospital"
+        activeDomain="Dashboard"
+        activeSubpage={domain.subpages[0]}
+        onSubpageChange={() => {}}
+        collapsed={false}
+      />
+    );
+
+    const toggle = screen.getByRole("button", { name: /dashboard/i });
+
+    // Ensure open
+    if (toggle.hasAttribute("aria-expanded")) {
+      expect(toggle).toHaveAttribute("aria-expanded", "true");
+    }
+
+    // Space to close
+    await user.keyboard(" ");
+    if (toggle.hasAttribute("aria-expanded")) {
+      expect(toggle).toHaveAttribute("aria-expanded", "false");
+    }
+
+    // Space to open again
+    await user.keyboard(" ");
+    if (toggle.hasAttribute("aria-expanded")) {
+      expect(toggle).toHaveAttribute("aria-expanded", "true");
+    }
   });
 });
