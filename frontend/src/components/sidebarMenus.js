@@ -1,0 +1,103 @@
+// Sidebar menu definitions for each domain and role
+export const HOSPITAL_SIDEBARS = {
+  Dashboard: [
+    "Overview",
+    "Active Cases",
+    "Critical Alerts",
+    "Today’s Tasks",
+    "System Health",
+    "Usage Metrics",
+  ],
+  Patients: [
+    "Patient List",
+    "New Patient Intake",
+    "Patient Timeline",
+    "Risk Scores",
+    "Care Plans",
+    "Documents",
+  ],
+  "AI Agents": [
+    "Agent Registry",
+    "Active Agents",
+    "Create Agent",
+    "Agent Workflows",
+    "Agent Sandbox",
+    "Agent Memory",
+    "Agent Logs",
+  ],
+  "Clinical Decision": [
+    "Symptom Analyzer",
+    "Differential Diagnosis",
+    "Treatment Support",
+    "Drug Interaction Check",
+    "Clinical Guidelines",
+    "Evidence Sources",
+  ],
+  Monitoring: [
+    "Live Monitoring",
+    "Patient Signals",
+    "AI Alerts",
+    "Escalations",
+    "Task Queue",
+    "Execution Timeline",
+  ],
+  Compliance: [
+    "Audit Trail",
+    "AI Explain ability",
+    "Decision Rationale",
+    "Data Lineage",
+    "Policy Controls",
+    "Consent Records",
+  ],
+  Administration: [
+    "Users & Roles",
+    "Access Control",
+    "Integrations",
+    "API Keys",
+    "System Settings",
+    "Billing",
+  ],
+};
+
+export const PATIENT_SIDEBARS = {
+  Home: [
+    "Health Summary",
+    "Latest Alerts",
+    "Care Tasks",
+    "Upcoming Visits",
+  ],
+  "My Health": [
+    "Vitals",
+    "Symptoms",
+    "Conditions",
+    "Medications",
+    "Care Plan",
+    "Devices",
+  ],
+  "AI Assistant": [
+    "Symptom Check",
+    "Ask AI",
+    "Daily Check-In",
+    "Recommendations",
+    "Health Guidance",
+  ],
+  Reports: [
+    "Lab Results",
+    "AI Assessments",
+    "Visit Reports",
+    "Downloads",
+  ],
+  Messages: [
+    "Care Team",
+    "AI Messages",
+    "Notifications",
+    "Support",
+  ],
+  Profile: [
+    "Personal Info",
+    "Insurance",
+    "Privacy Settings",
+    "Consent",
+    "Security",
+  ],
+};
