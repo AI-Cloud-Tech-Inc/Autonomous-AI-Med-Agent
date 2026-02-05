@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "p1c2u.docker-compose",
+        "formulahendry.docker-explorer",
+        "docker.docker"
+    ]
+}

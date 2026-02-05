@@ -1,4 +1,7 @@
 # Autonomous-AI-Med-Agent
+
+# Trigger deployment: Feb 5, 2026
+
 Autonomous Agentic AI Med Agent supports doctors and patients by autonomously analyzing medical data, assisting symptom assessment, patient monitoring, and care coordination. It streamlines doctor–patient interactions, automates workflows, improves accuracy, and ensures secure, compliant human-in-the-loop healthcare delivery.
 
 ---
@@ -17,6 +20,7 @@ A full-stack, healthcare-compliant platform supporting doctors and patients by a
 - `docs/` — Healthcare-specific, best-practice documentation and publication strategy.
 
 ## Key Features
+
 - Medical data ingestion and analysis
 - Symptom assessment and triage
 - Patient monitoring and alerts
@@ -26,13 +30,32 @@ A full-stack, healthcare-compliant platform supporting doctors and patients by a
 - Full compliance: HIPAA, FDA, SOC 2, HITRUST
 
 ## Getting Started
+
 See the `/docs/AI_Med_Agent_Publication_Strategy.md` for publication, compliance, and deployment strategy.
 
 ---
 
 ## Next Steps
+
 - Implement backend microservices in `backend/`
 - Scaffold React frontend in `frontend/`
 - Scaffold React Native mobile apps in `mobile/`
 - Add infrastructure as code in `infrastructure/`
 - Follow compliance and publication guides in `docs/`
+
+## Deployment
+
+This repository deploys the React frontend to GitHub Pages via a CI workflow in `.github/workflows/gh-pages.yml`.
+
+- Build target: `frontend/build`
+- Trigger: Pushes to `main`
+- Live URL: https://<your-org-or-user>.github.io/Autonomous-AI-Med-Agent/
+
+To test locally:
+
+```bash
+cd frontend
+npm ci
+npm run build
+npx serve -s build
+```
