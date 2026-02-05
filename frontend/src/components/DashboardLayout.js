@@ -12,7 +12,6 @@ import SidebarNav from "./SidebarNav";
 export default function DashboardLayout({ children }) {
   const [activeDomain, setActiveDomain] = useState("AI Med Agent");
   const [activeSidebarItem, setActiveSidebarItem] = useState(null);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   // Optionally, update sidebar items based on activeDomain
   // For now, SidebarNav always shows Dashboard items for demo
@@ -32,7 +31,6 @@ export default function DashboardLayout({ children }) {
               activeSection={activeDomain}
               activeItem={activeSidebarItem}
               onItemSelect={setActiveSidebarItem}
-              collapsed={sidebarCollapsed}
             />
         </div>
         <main className="flex-1 ml-72 pt-8 px-8 overflow-y-auto" style={{ minHeight: 'calc(100vh - 4rem)' }}>
