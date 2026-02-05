@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 // Header domain definitions with subpages
 export const HOSPITAL_HEADER_DOMAINS = [
